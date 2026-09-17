@@ -1,4 +1,7 @@
 #include <vulkan/vulkan.h>
+
+#define VK_USE_PLATFORM_WIN32_KHR
+#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
 #include <iostream>
@@ -56,6 +59,15 @@ class EngineApplication
 			SetupDebugMessenger();
 			PickPhysicalDevice();
 			CreateLogicalDevice();
+			CreateSurface();
+		}
+
+		void CreateSurface()
+		{
+			if (glfwCreateWindowSurface(instance, window, nullptr, &surface) != VK_SUCCESS)
+			{
+				throw std::runtime_error("failed to create window surface!");
+			}
 		}
 
 		void CreateLogicalDevice()
@@ -200,6 +212,8 @@ class EngineApplication
 			{
 				DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
 			}
+
+			vkDestroySurfaceKHR(instance, surface, nullptr);
 			vkDestroyDevice(device, nullptr);
 			vkDestroyInstance(instance, nullptr);
 			glfwDestroyWindow(window);
